@@ -1,10 +1,21 @@
 var express = require("express");
 var mongojs = require("mongojs");
+var mongoose = require("mongoose");
+
+//scraping tools
 var cheerio = require("cheerio");
 var axios = require("axios");
 
+//require all models
+var db = require("./models");
+
+var PORT = 8080; 
+
 // intialize express
 var app = express();
+
+// connect to mongo db
+mongoose.connect("mongodb://localhost/----", {useNewUrlParser: true});
 
 // database configuration 
 var databaseUrl = "news_scraper";
