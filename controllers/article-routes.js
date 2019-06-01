@@ -1,8 +1,8 @@
 var express = require("express");
 var request = require("request");
 var cheerio = require("cheerio");
-var Comment = require("../models/comments.js");
-var Article = require("../models/articles.js");
+var Comment = require("../models/Comment.js");
+var Article = require("../models/Article.js");
 var router = express.Router();
 
 
@@ -50,7 +50,7 @@ router.get("/scrape", function(req, res) {
 // This will get the articles we scraped from the mongoDB
 router.get("/articles", function(req, res) {
   // Grab every doc in the Articles array
-  Article.find({}).limit(20)
+  Article.find({})
   // Execute the above query
   .exec(function(err, doc) {
     // Log any errors
