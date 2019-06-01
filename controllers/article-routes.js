@@ -1,8 +1,8 @@
 var express = require("express");
 var request = require("request");
 var cheerio = require("cheerio");
-var Comment = require("../models/Comment.js");
-var Article = require("../models/Article.js");
+var Comment = require("../models/comments.js");
+var Article = require("../models/articles.js");
 var router = express.Router();
 
 
@@ -21,8 +21,8 @@ router.get("/scrape", function(req, res) {
       var result = {};
 
       result.title = $(element).children("h2").text();
-      result.summary = $(this).children(".summary").text();
-      result.link = $(this).children("h2").children("a").attr("href");
+      result.summary = $(element).children(".summary").text();
+      result.link = $(element).children("h2").children("a").attr("href");
 
       
       // Using our Article model, create a new entry
