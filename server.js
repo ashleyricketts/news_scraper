@@ -1,90 +1,60 @@
+// Dependencies
 var express = require("express");
-var mongojs = require("mongojs");
+var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
+var exphbs = require("express-handlebars");
 
-//scraping tools
+// Requiring Comment and Article models
+var Comment = require("./models/comments.js");
+var Article = require("./models/articles.js");
+
+// Requiring routing controllers
+var htmlRouter = require("./controllers/html-routes.js");
+var articleRouter = require("./controllers/article-routes.js");
+
+// Scraping tools
+var request = require("request");
 var cheerio = require("cheerio");
-var axios = require("axios");
 
-//require all models
-var db = require("./models");
+// Set mongoose to leverage built in JavaScript ES6 Promises
+mongoose.Promise = Promise;
 
-var PORT = 8080; 
-
-// intialize express
+// Initialize Express
+var port = process.env.PORT || 8080;
 var app = express();
 
-// connect to mongo db
-mongoose.connect("mongodb://localhost/----", {useNewUrlParser: true});
+// Use body parser with the app
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
-// database configuration 
-var databaseUrl = "news_scraper";
-var collections = ["scrapedNews"];
+// Initialize Handlebars
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
-// hook mongojs configuration to the db variable
-var db = mongojs(databaseUrl, collections);
+// Routing
+app.use("/", htmlRouter);
+app.use("/", articleRouter);
+
+// Make public a static dir
+app.use(express.static("public"));
+
+// Database configuration with mongoose
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+mongoose.connect(MONGODB_URI);
+var db = mongoose.connection;
+
+// Show any mongoose errors
 db.on("error", function(error) {
-  console.log("Database Error:", error);
+  console.log("Mongoose Error: ", error);
 });
 
-// main route (simple Hello World Message)
-app.get("/", function(req, res) {
-    res.send("Hello world");
-  });
-
-
-// Retrieve data from the db
-app.get("/all", function(req, res) {
-    // Find all results from the scrapedData collection in the db
-    db.scrapedNews.find({}, function(error, found) {
-      // Throw any errors to the console
-      if (error) {
-        console.log(error);
-      }
-      // If there are no errors, send the data to the browser as json
-      else {
-        res.json(found);
-      }
-    });
-  });
-
-// scrape data from one site and place it into the mongodb db
-app.get("/scrape", function(req, res){
-    axios.get("https://www.aljazeera.com/topics/regions/us-canada.html").then(function(response) {
-
-    var $ = cheerio.load(response.data);
-
-    var results = [];
-
-    $("h2").each(function(i, element) {
-
-        var title = $(element).parent().text();
-        var link = $(element).parent().parent().find("a").attr("href");
-        // var summary = $(element).parent().find("p");
-
-        if(title && link) {
-            db.scrapedNews.insert({
-                title: title,
-                link: link
-            },
-            function(err, inserted){
-                if (err){
-                    console.log(err);
-                }
-                else{
-                    console.log(inserted);
-                }
-            });
-        }
-
-    });
-    });
-    res.send("Scrape Complete");
+// Once logged in to the db through mongoose, log a success message
+db.once("open", function() {
+  console.log("Mongoose connection successful.");
 });
 
-//listen on port 8080
-app.listen(8080, function() {
-    console.log("App running on port 8080!")
-})
 
-
+app.listen(port, function() {
+  console.log("App running on port 8080!");
+});
