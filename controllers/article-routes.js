@@ -11,20 +11,21 @@ var router = express.Router();
 // Scrape data from website and save to mongodb
 router.get("/scrape", function(req, res) {
   // Grab the body of the html with request
-  request("https://www.nytimes.com/", function(error, response, html) {
+  request("https://www.npr.org/sections/news/", function(error, response, html) {
     // Load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
     // Grab every part of the html that contains a separate article
-    $("article").each(function(i, element) {
-
+    $("div.item-info").each(function(i, element) {
+      // console.log(element);
       // Save an empty result object
       var result = {};
 
       result.title = $(element).children("h2").text();
-      result.summary = $(element).children(".summary").text();
+      result.description = $(element).children("p.teaser").text();
       result.link = $(element).children("h2").children("a").attr("href");
 
-      
+      console.log("hello!" + result.title);
+
       // Using our Article model, create a new entry
       var entry = new Article(result);
 

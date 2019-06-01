@@ -8,19 +8,19 @@ var ArticleSchema = new Schema({
   // title is a required string
   title: {
     type: String,
-    required: true,
+    // required: true,
     unique: true
   },
   // description is a required string
   description: {
     type: String,
-    required: true,
+    // required: true,
     unique: true
   },
   // boolean to flag articles as saved
   saved: {
     type: Boolean,
-    required: true,
+    // required: true,
     default: false
   },
   // This will save an array of comments' ObjectIds
