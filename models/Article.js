@@ -6,7 +6,8 @@ var ArticleSchema = new Schema({
 
     title: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
 
     link: {
@@ -28,6 +29,6 @@ var ArticleSchema = new Schema({
 });
 
 // creates model from the above schema, using mongoose's model method
-var Article = mongoose.model("Article", Article Schema);
+var Article = mongoose.model("Article", ArticleSchema);
 
 module.exports = Article;

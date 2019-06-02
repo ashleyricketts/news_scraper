@@ -13,6 +13,10 @@ var PORT = 8080;
 // initialize express
 var app = express();
 
+// database configuration
+// var databaseUrl = "NPRscraper";
+// var collections = ["Articles"]
+
 // Use morgan logger for logging requests
 app.use(logger("dev"));
 // Parse request body as JSON
@@ -22,10 +26,15 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/NPRscraper", { useNewUrlParser: true });
+// mongoose.connect("mongodb://localhost/NPRscraper", { useNewUrlParser: true });
+
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
+mongoose.connect(MONGODB_URI);
 
 
-// Routes
+
+// Routes/////////////////////////////////////
 
 // get route to scrape NPR website
 app.get("/scrape", function(req, res) {
@@ -44,18 +53,35 @@ app.get("/scrape", function(req, res) {
             // console.log("&" + summary);
             result.link = $(element).children("h2").children("a").attr("href");
             // console.log("*" + link);
-            console.log(result);
+            // console.log(result);
 
+            db.Article.create(result)
+                .then(function(dbArticle) {
+                    console.log(dbArticle);
+                })
+                .catch(function(err) {
+                    console.log(err);
+                });
         }); 
     
         res.send("Scrape Complete");
     });
 });
 
+// route for getting all Articles from db
+app.get("/articles", function(req, res) {
+    db.Article.find({})
+        .then(function(dbArticle) {
+            res.json(dbArticle);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+});
 
 // start the server
 app.listen(PORT, function(){
-    console.log("App running on port" + PORT + "!");
+    console.log("App running on port " + PORT + "!");
 });
 
 
