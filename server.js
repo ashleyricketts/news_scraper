@@ -44,12 +44,18 @@ app.get("/scrape", function(req, res) {
             // console.log("&" + summary);
             result.link = $(element).children("h2").children("a").attr("href");
             // console.log("*" + link);
-            // console.log(result);
+            console.log(result);
 
         }); 
     
         res.send("Scrape Complete");
     });
+});
+
+
+// start the server
+app.listen(PORT, function(){
+    console.log("App running on port" + PORT + "!");
 });
 
 
