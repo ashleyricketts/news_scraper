@@ -41,6 +41,21 @@ mongoose.connect(MONGODB_URI);
 
 // Routes
 
+// route for homepage
+app.get("/", function(req, res) {
+    db.Article.find({"saved": false}, function(err, data) {
+        if(err) {
+            return res.status(500).end();
+        }
+        var hbsObject = {
+            article: data
+        };
+        console.log(hbsObject);
+
+        res.render("index", hbsObject);
+    });
+});
+
 // get route to scrape NPR website
 app.get("/scrape", function(req, res) {
 
@@ -84,10 +99,21 @@ app.get("/articles", function(req, res) {
         });
 });
 
-// route for homepage
-app.get("/", function(req, res) {
-    res.render("index");
+// route for getting saved articles
+app.get("/saved", function(req, res) {
+    db.Article.find({"saved": true}).populate("comment").exec(function(err, articles) {
+        if(err) {
+            return res.status(500).end();
+        }
+
+        var hbsObject = {
+            article: articles
+        };
+        res.render("saved", hbsObject)
+    });
 });
+
+
 
 // start the server
 app.listen(PORT, function(){
