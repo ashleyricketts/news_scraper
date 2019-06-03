@@ -1,6 +1,7 @@
 var express = require("express");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var exphbs = require("express-handlebars");
 
 // scraping tools
 var cheerio = require("cheerio");
@@ -8,10 +9,14 @@ var axios = require("axios");
 
 var db = require("./models");
 
-var PORT = 8080;
+var PORT = process.env.PORT || 8080;
 
 // initialize express
 var app = express();
+
+// handlebars
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 // database configuration
 // var databaseUrl = "NPRscraper";
@@ -34,7 +39,7 @@ mongoose.connect(MONGODB_URI);
 
 
 
-// Routes/////////////////////////////////////
+// Routes
 
 // get route to scrape NPR website
 app.get("/scrape", function(req, res) {
@@ -77,6 +82,11 @@ app.get("/articles", function(req, res) {
         .catch(function(err) {
             res.json(err);
         });
+});
+
+// route for homepage
+app.get("/", function(req, res) {
+    res.render("index");
 });
 
 // start the server
