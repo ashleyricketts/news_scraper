@@ -48,3 +48,12 @@
 #scrape {
   margin: 8px 0px;
 }
+
+.deleteNote {
+	display: inline-block;
+}
+
+.previousNotes {
+    display: inline-block;
+    width: 90%
+}
