@@ -1,4 +1,7 @@
 # Mongo NPR News Scraper
+
+![app](/public/assets/img/appview.PNG)
+
 ## Overview
 This is a web app that allows users to view and leave comments on the latest news from NPR. 
 
