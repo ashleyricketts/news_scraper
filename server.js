@@ -50,7 +50,7 @@ app.get("/", function(req, res) {
         var hbsObject = {
             article: data
         };
-        console.log(hbsObject);
+        // console.log(hbsObject);
 
         res.render("index", hbsObject);
     });
